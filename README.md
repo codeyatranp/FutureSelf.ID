@@ -1,3 +1,5 @@
+<img width="1360" height="768" alt="1000118474" src="https://github.com/user-attachments/assets/c67e4437-1047-4c05-9489-50b99a839f85" />
+
 # 🌱 FutureSelf.id
 
 **FutureSelf.id** is an open, community-driven platform that helps people **design, visualize, and work toward their future selves**.
@@ -5,8 +7,7 @@
 It is not just a goal tracker.  
 It is a **personal evolution system** — combining identity, long-term vision, habits, skills, and projects into one living roadmap.
 
-This project is being built under **CodeYatraNP** as a c7<img width="1360" height="768" alt="1000118474" src="https://github.com/user-attachments/assets/c67e4437-1047-4c05-9489-50b99a839f85" />
-ollaborative learning and impact platform for young developers, designers, and thinkers.
+This project is being built under **CodeYatraNP** as a collaborative learning and impact platform for young developers, designers, and thinkers.
 
 ---
 
