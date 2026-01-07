@@ -107,8 +107,27 @@ export const Reflection = () => {
 
           {/* Send Button */}
           <div className="flex items-center gap-6">
-            <button className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg 
-                             flex items-center gap-2 hover:bg-primary/90 transition-all box-glow">
+            <button
+              type="button"
+              onClick={() => {
+                const trimmed = content.trim();
+                if (!trimmed) {
+                  return;
+                }
+                const existingRaw = localStorage.getItem("fs_reflections") || "[]";
+                const existing = JSON.parse(existingRaw) as Array<{ id: string; content: string; createdAt: string }>;
+                const entry = {
+                  id: `${Date.now()}`,
+                  content: trimmed,
+                  createdAt: new Date().toISOString(),
+                };
+                const next = [...existing, entry];
+                localStorage.setItem("fs_reflections", JSON.stringify(next));
+                setContent("");
+              }}
+              className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg 
+                             flex items-center gap-2 hover:bg-primary/90 transition-all box-glow"
+            >
               <Send className="w-4 h-4" />
               Send to 2029
             </button>

@@ -14,6 +14,7 @@ import Signup from "./pages/Signup";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import AppLayout from "./components/AppLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,7 +32,13 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/reflection" element={<Reflection />} />
-          <Route element={<AppLayout />}>
+          <Route
+            element={(
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            )}
+          >
             <Route path="/terminal" element={<Terminal />} />
             <Route path="/timeline" element={<Timeline />} />
             <Route path="/identity" element={<Identity />} />

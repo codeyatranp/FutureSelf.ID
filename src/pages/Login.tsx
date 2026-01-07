@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Terminal, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,28 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    const emailValid = /.+@.+\..+/.test(email);
+    if (!emailValid) {
+      setError("Enter a valid email address.");
+      return;
+    }
+
+    if (!password || password.length < 4) {
+      setError("Password must be at least 4 characters.");
+      return;
+    }
+
+    const user = { email, name: email.split("@")[0] || "Architect" };
+    localStorage.setItem("fs_user", JSON.stringify(user));
+    navigate("/terminal");
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
@@ -64,7 +86,10 @@ const Login = () => {
             <span className="ml-2">login.session</span>
           </div>
 
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <p className="text-xs text-destructive font-mono">{">"} {error}</p>
+            )}
             <div className="space-y-2">
               <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
                 Email Address

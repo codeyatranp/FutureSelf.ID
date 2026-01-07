@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Terminal, Eye, EyeOff, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,46 @@ const Signup = () => {
     email: "",
     password: "",
   });
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const passwordRequirements = [
     { label: "At least 8 characters", met: formData.password.length >= 8 },
     { label: "Contains a number", met: /\d/.test(formData.password) },
     { label: "Contains uppercase", met: /[A-Z]/.test(formData.password) },
   ];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!formData.name.trim()) {
+      setError("Display name is required.");
+      return;
+    }
+
+    const emailValid = /.+@.+\..+/.test(formData.email);
+    if (!emailValid) {
+      setError("Enter a valid email address.");
+      return;
+    }
+
+    const allMet = passwordRequirements.every((req) => req.met);
+    if (!allMet) {
+      setError("Password does not meet all requirements.");
+      return;
+    }
+
+    if (!acceptedTerms) {
+      setError("You must agree to the Terms and Privacy Policy.");
+      return;
+    }
+
+    const user = { name: formData.name.trim(), email: formData.email.trim() };
+    localStorage.setItem("fs_user", JSON.stringify(user));
+    navigate("/terminal");
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
@@ -73,7 +107,10 @@ const Signup = () => {
             <span className="ml-2">identity.create</span>
           </div>
 
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {error && (
+              <p className="text-xs text-destructive font-mono">{">"} {error}</p>
+            )}
             <div className="space-y-2">
               <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
                 Display Name
@@ -158,7 +195,12 @@ const Signup = () => {
             </div>
 
             <div className="flex items-start gap-2 text-xs">
-              <input type="checkbox" className="mt-0.5 rounded border-border bg-background/50 text-primary focus:ring-primary/20" />
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-0.5 rounded border-border bg-background/50 text-primary focus:ring-primary/20"
+              />
               <label className="text-muted-foreground font-mono leading-relaxed cursor-pointer">
                 I agree to the{" "}
                 <Link to="/terms" className="text-primary hover:text-primary/80">Terms of Service</Link>

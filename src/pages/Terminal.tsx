@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Edit3, Rocket, Fingerprint, RotateCcw, TrendingUp, ChevronRight } from "lucide-react";
@@ -42,6 +43,39 @@ const systemAlerts = [
 
 export const Terminal = () => {
   const navigate = useNavigate();
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState<string[]>([]);
+
+  const handleExec = () => {
+    const value = input.trim();
+    if (!value) return;
+
+    const normalized = value.toLowerCase();
+    if (normalized === "help") {
+      const helpLines = [
+        "Available commands:",
+        "- write today → open reflection",
+        "- open future → open timeline",
+        "- view identity → open identity",
+        "- reflect → open archives",
+        "- timeline → open timeline",
+      ];
+      setHistory((prev) => [...prev, `> ${value}`, ...helpLines]);
+      setInput("");
+      return;
+    }
+
+    const match = commands.find((c) => c.command === normalized);
+    if (match) {
+      setHistory((prev) => [...prev, `> ${value}`]);
+      setInput("");
+      navigate(match.path);
+      return;
+    }
+
+    setHistory((prev) => [...prev, `> ${value}`, "Unknown command. Type 'help' for a list of commands."]);
+    setInput("");
+  };
 
   return (
     <div className="min-h-full p-6 md:p-8">
@@ -141,17 +175,38 @@ export const Terminal = () => {
         transition={{ delay: 1.4 }}
         className="terminal-card p-4"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-primary font-mono font-semibold">fs_console ~ %</span>
-          <input
-            type="text"
-            placeholder="Enter command..."
-            className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-mono"
-          />
-          <div className="w-3 h-5 bg-primary animate-glow-pulse" />
-          <button className="px-4 py-2 border border-primary text-primary font-mono text-sm hover:bg-primary hover:text-primary-foreground transition-colors rounded">
-            EXEC
-          </button>
+        <div className="space-y-3">
+          {history.length > 0 && (
+            <div className="text-xs font-mono text-muted-foreground space-y-1 max-h-40 overflow-y-auto">
+              {history.map((line, index) => (
+                <p key={index}>{line}</p>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center gap-3">
+            <span className="text-primary font-mono font-semibold">fs_console ~ %</span>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleExec();
+                }
+              }}
+              placeholder="Enter command..."
+              className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground/50 focus:outline-none font-mono"
+            />
+            <div className="w-3 h-5 bg-primary animate-glow-pulse" />
+            <button
+              type="button"
+              onClick={handleExec}
+              className="px-4 py-2 border border-primary text-primary font-mono text-sm hover:bg-primary hover:text-primary-foreground transition-colors rounded"
+            >
+              EXEC
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>

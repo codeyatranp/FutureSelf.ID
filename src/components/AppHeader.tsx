@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface AppHeaderProps {
@@ -6,6 +7,23 @@ interface AppHeaderProps {
 }
 
 export const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
+  const [userName, setUserName] = useState("Architect");
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("fs_user");
+      if (raw) {
+        const parsed = JSON.parse(raw) as { name?: string };
+        if (parsed?.name) {
+          setUserName(parsed.name);
+        }
+      }
+    } catch {
+      setUserName("Architect");
+    }
+  }, []);
+
+  const initial = userName.trim().charAt(0).toUpperCase() || "A";
   return (
     <header className="h-14 border-b border-border flex items-center justify-between px-6 bg-card/50">
       <div className="flex items-center gap-4">
@@ -28,9 +46,9 @@ export const AppHeader = ({ title, subtitle }: AppHeaderProps) => {
           <span className="w-2 h-2 rounded-full bg-primary animate-glow-pulse" />
           <span>CONNECTION: SECURE</span>
         </div>
-        <div className="text-xs text-muted-foreground">USER: ARCHITECT</div>
+        <div className="text-xs text-muted-foreground">USER: {userName.toUpperCase()}</div>
         <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary flex items-center justify-center">
-          <span className="text-primary text-xs font-bold">A</span>
+          <span className="text-primary text-xs font-bold">{initial}</span>
         </div>
       </div>
     </header>

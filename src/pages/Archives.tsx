@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, Lock, Image, Mic, Pin } from "lucide-react";
 
@@ -38,6 +39,28 @@ const timeCapsules = [
 ];
 
 export const Archives = () => {
+  const [latestReflection, setLatestReflection] = useState<{
+    id: string;
+    content: string;
+    createdAt: string;
+  } | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("fs_reflections");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as Array<{
+        id: string;
+        content: string;
+        createdAt: string;
+      }>;
+      if (!parsed.length) return;
+      const sorted = [...parsed].sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+      setLatestReflection(sorted[0]);
+    } catch {
+      setLatestReflection(null);
+    }
+  }, []);
   return (
     <div className="min-h-full p-6 md:p-8">
       {/* Header */}
@@ -110,6 +133,28 @@ export const Archives = () => {
               </span>
             </div>
           </motion.div>
+
+          {latestReflection && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="terminal-card p-5"
+            >
+              <div className="mb-4">
+                <h3 className="text-xl font-serif text-foreground mb-1">Latest Reflection</h3>
+                <p className="text-xs font-mono text-primary">
+                  SAVED: {new Date(latestReflection.createdAt).toLocaleString()}
+                </p>
+              </div>
+              <div className="border-l-2 border-primary/30 pl-4">
+                <p className="font-serif text-muted-foreground leading-relaxed whitespace-pre-line">
+                  {latestReflection.content.slice(0, 400)}
+                  {latestReflection.content.length > 400 ? "…" : ""}
+                </p>
+              </div>
+            </motion.div>
+          )}
 
           {/* Letter Entry */}
           <motion.div

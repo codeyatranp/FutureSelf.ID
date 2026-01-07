@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -22,6 +22,12 @@ const bottomItems = [
 
 export const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("fs_user");
+    navigate("/login");
+  };
 
   return (
     <aside className="w-56 min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col">
@@ -76,7 +82,10 @@ export const AppSidebar = () => {
             <span className="font-mono">// {item.label}</span>
           </NavLink>
         ))}
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-foreground transition-all">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-foreground transition-all"
+        >
           <LogOut className="w-4 h-4 text-muted-foreground" />
           <span className="font-mono">// Log Out</span>
         </button>
